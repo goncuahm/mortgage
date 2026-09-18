@@ -538,14 +538,20 @@ def note(text):
 def make_plot(title, xlabel, ylabel):
     fig = go.Figure()
     fig.update_layout(
+        template=None,  # start from a blank slate — no default Plotly
+                        # template colors to override our explicit ones below
         margin=dict(l=10, r=10, t=10, b=10),
         paper_bgcolor=COL_CARD,
         plot_bgcolor=COL_CARD,
         font=dict(family="Georgia, serif", color=COL_INK, size=12),
         xaxis=dict(title=xlabel, gridcolor=COL_GRID, zeroline=False,
-                   linecolor=COL_INK, tickfont=dict(family="ui-monospace, monospace")),
+                   linecolor=COL_INK, color=COL_INK,
+                   tickfont=dict(family="ui-monospace, monospace", color=COL_INK)),
         yaxis=dict(title=ylabel, gridcolor=COL_GRID, zeroline=False,
-                   linecolor=COL_INK, tickfont=dict(family="ui-monospace, monospace")),
+                   linecolor=COL_INK, color=COL_INK,
+                   tickfont=dict(family="ui-monospace, monospace", color=COL_INK)),
+        legend=dict(font=dict(color=COL_INK)),
+        hoverlabel=dict(bgcolor=COL_CARD, font=dict(color=COL_INK), bordercolor=COL_INK),
         height=360,
         showlegend=False,
         hovermode="x unified",
@@ -714,7 +720,7 @@ with tab1:
                 marker=dict(color=COL_BRICK, size=13, line=dict(color="white", width=1)),
                 hovertemplate=f"selected {term1_years:g}y<br>%{{y:,.0f}}<extra></extra>",
             ))
-            st.plotly_chart(fig1, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig1, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
 
 # ============================================================
@@ -825,7 +831,7 @@ with tab2:
                     marker=dict(color=COL_GOLD, size=11),
                     hovertemplate=f"breakeven ≈ {payback:.1f} mo<extra></extra>",
                 ))
-            st.plotly_chart(fig2, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig2, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         note(
             "NPV discounts the stream of monthly savings at the <b>new</b> loan's own rate over the "
@@ -953,7 +959,7 @@ with tab3:
                     marker=dict(color=COL_GOLD, size=10),
                     hovertemplate=f"depletes at month {depleted_at}<extra></extra>",
                 ))
-            st.plotly_chart(fig3a, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig3a, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         st.write("")
         with st.container(border=True):
@@ -983,7 +989,7 @@ with tab3:
                 marker=dict(color=COL_BRICK, size=10),
                 hovertemplate=f"today's assumption: {fmt_pct(infl)}<extra></extra>",
             ))
-            st.plotly_chart(fig3b, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig3b, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         note(
             "<b>Reading the second chart:</b> at low inflation a fixed-rate loan is expensive in real "
@@ -1134,7 +1140,7 @@ with tab4:
                 orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
                 font=dict(size=10),
             ))
-            st.plotly_chart(figA, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(figA, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         note(
             "The actual price–yield curve <b>bows above</b> both straight-line approximations — this "
@@ -1178,7 +1184,7 @@ with tab4:
                 orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
                 font=dict(size=10),
             ))
-            st.plotly_chart(figB, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(figB, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         note(
             "Reading this chart: for small yield shifts (near Δy = 0) all three lines nearly "
@@ -1209,7 +1215,7 @@ with tab4:
                 annotation_position="top right",
                 annotation_font_color=COL_BRICK,
             )
-            st.plotly_chart(figC, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(figC, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
         note(
             "Each bar is the present value of one coupon (the tall final bar also includes the "
