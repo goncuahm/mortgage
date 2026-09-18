@@ -58,17 +58,26 @@ st.markdown(f"""
   h1, h2, h3 {{
       color: {COL_INK};
   }}
+  /* Sidebar: LIGHT background + BLACK text, on purpose. A dark
+     sidebar background forcing light text was fragile — Streamlit
+     renders input boxes and dropdowns with their own light
+     backgrounds regardless of the panel around them, so light text
+     landed on light input backgrounds and disappeared. Light
+     background + black text everywhere has no such failure mode:
+     black text is readable against any light shade, full stop. */
   section[data-testid="stSidebar"] {{
-      background-color: {COL_INK};
+      background-color: {COL_CARD};
+      border-right: 1px solid {COL_LINE};
   }}
   section[data-testid="stSidebar"] * {{
-      color: {COL_PAPER} !important;
+      color: #000000 !important;
   }}
   section[data-testid="stSidebar"] .stSelectbox label,
   section[data-testid="stSidebar"] .stRadio label,
   section[data-testid="stSidebar"] .stTextInput label {{
-      color: {COL_GOLD_L} !important;
+      color: {COL_LEDGER} !important;
       font-style: italic;
+      font-weight: bold;
   }}
   div[data-testid="stVerticalBlockBorderWrapper"] {{
       background-color: {COL_CARD};
@@ -185,18 +194,18 @@ st.markdown(f"""
   .main table, div[data-testid="stMain"] table,
   .main th, div[data-testid="stMain"] th,
   .main td, div[data-testid="stMain"] td {{
-      color: {COL_INK} !important;
+      color: #000000 !important;
   }}
 
-  /* The actual typed/selected VALUE inside inputs — both main area
-     and sidebar. This is a higher-specificity selector (tag name)
-     than the sidebar's blanket `*` rule above, so it wins and
-     overrides it — fixing invisible white text typed into sidebar
-     text inputs (e.g. the currency-symbol box). */
+  /* The actual typed/selected VALUE inside inputs — main area,
+     sidebar, and anywhere else. Plain black on a light card
+     background: the highest-contrast, most theme-proof combination
+     there is. This is also a higher-specificity selector (tag name)
+     than the sidebar's blanket `*` rule above, so it wins there too. */
   input, textarea,
   div[data-baseweb="select"] > div,
   div[data-baseweb="base-input"] {{
-      color: {COL_INK} !important;
+      color: #000000 !important;
       background-color: {COL_CARD} !important;
   }}
 
@@ -207,7 +216,7 @@ st.markdown(f"""
       background-color: {COL_CARD} !important;
   }}
   div[data-baseweb="popover"] * {{
-      color: {COL_INK} !important;
+      color: #000000 !important;
   }}
 
   /* Tab labels: explicit, theme-independent contrast */
@@ -539,7 +548,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown(
-        "<span style='font-size:12px; color:#CFCABB; font-style:italic;'>"
+        "<span style='font-size:12px; color:#000000; font-style:italic;'>"
         "All figures are computed with standard time-value-of-money formulas "
         "(annuity PV/payment, Macaulay duration, effective annual rate, and the "
         "Fisher equation). Default numbers illustrate a high-inflation TL-style "
@@ -1170,8 +1179,6 @@ st.caption(
     "Default figures illustrate a high-inflation, TL-style market, following the original companion "
     "tool's assumptions, but every input, and the currency itself, is fully editable above."
 )
-
-
 
 
 
