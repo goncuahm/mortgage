@@ -183,6 +183,30 @@ st.markdown(f"""
      of relying on the theme at all.
      ============================================================ */
 
+  /* Widget labels and radio/checkbox OPTION text, scoped via
+     Streamlit's own stable data-testid attributes (these are far
+     less likely to change between versions than class names or
+     ARIA roles alone). Scoping the radio/checkbox rule to inside
+     [data-testid="stRadio"]/[data-testid="stCheckbox"] means it
+     can never collide with this app's own custom-colored markdown
+     (stat cards, verdict boxes, the header), since those aren't
+     rendered inside a radio/checkbox widget. */
+  [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] * {{
+      color: {COL_INK} !important;
+  }}
+  [data-testid="stRadio"] [data-testid="stMarkdownContainer"],
+  [data-testid="stRadio"] [data-testid="stMarkdownContainer"] *,
+  [data-testid="stRadio"] label,
+  [data-testid="stRadio"] label * {{
+      color: {COL_INK} !important;
+  }}
+  [data-testid="stCheckbox"] [data-testid="stMarkdownContainer"],
+  [data-testid="stCheckbox"] [data-testid="stMarkdownContainer"] *,
+  [data-testid="stCheckbox"] label,
+  [data-testid="stCheckbox"] label * {{
+      color: {COL_INK} !important;
+  }}
+
   /* Main-area widget labels, radio/checkbox option text, tables —
      covers both older ("main") and newer ("stMain") Streamlit DOM. */
   .main label, div[data-testid="stMain"] label,
@@ -1214,6 +1238,21 @@ st.caption(
 # ============================================================
 st.markdown(f"""
 <style>
+  [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] * {{
+      color: {COL_INK} !important;
+  }}
+  [data-testid="stRadio"] [data-testid="stMarkdownContainer"],
+  [data-testid="stRadio"] [data-testid="stMarkdownContainer"] *,
+  [data-testid="stRadio"] label,
+  [data-testid="stRadio"] label * {{
+      color: {COL_INK} !important;
+  }}
+  [data-testid="stCheckbox"] [data-testid="stMarkdownContainer"],
+  [data-testid="stCheckbox"] [data-testid="stMarkdownContainer"] *,
+  [data-testid="stCheckbox"] label,
+  [data-testid="stCheckbox"] label * {{
+      color: {COL_INK} !important;
+  }}
   .stTabs [role="tablist"] [role="tab"],
   .stTabs [role="tablist"] [role="tab"] *,
   .stTabs [data-baseweb="tab-list"] button,
