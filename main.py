@@ -535,24 +535,45 @@ def note(text):
     st.markdown(html, unsafe_allow_html=True)
 
 
-def make_plot(title, xlabel, ylabel):
+def make_plot(title, xlabel, ylabel, x_tickformat=None, y_tickformat=None,
+              x_ticksuffix=None, y_ticksuffix=None, x_nticks=None):
     fig = go.Figure()
     fig.update_layout(
         template=None,  # start from a blank slate — no default Plotly
-                        # template colors to override our explicit ones below
-        margin=dict(l=10, r=10, t=10, b=10),
+                        # template colors/margins to fight against
+        margin=dict(l=70, r=30, t=25, b=60),  # enough room for an axis
+                                               # title PLUS its tick labels
+                                               # on every side — the old
+                                               # 10px margins were forcing
+                                               # the two to overlap
         paper_bgcolor=COL_CARD,
         plot_bgcolor=COL_CARD,
         font=dict(family="Georgia, serif", color=COL_INK, size=12),
-        xaxis=dict(title=xlabel, gridcolor=COL_GRID, zeroline=False,
-                   linecolor=COL_INK, color=COL_INK,
-                   tickfont=dict(family="ui-monospace, monospace", color=COL_INK)),
-        yaxis=dict(title=ylabel, gridcolor=COL_GRID, zeroline=False,
-                   linecolor=COL_INK, color=COL_INK,
-                   tickfont=dict(family="ui-monospace, monospace", color=COL_INK)),
+        xaxis=dict(
+            title=dict(text=xlabel, font=dict(size=12), standoff=12),
+            gridcolor=COL_GRID, zeroline=False,
+            linecolor=COL_INK, color=COL_INK,
+            tickfont=dict(family="ui-monospace, monospace", color=COL_INK, size=10),
+            tickformat=x_tickformat,
+            ticksuffix=x_ticksuffix,
+            nticks=x_nticks,
+            automargin=True,  # Plotly reserves whatever space the actual
+                               # tick-label text needs, instead of a fixed
+                               # guess — guarantees no clipping/overlap
+                               # regardless of how long the numbers get.
+        ),
+        yaxis=dict(
+            title=dict(text=ylabel, font=dict(size=12), standoff=10),
+            gridcolor=COL_GRID, zeroline=False,
+            linecolor=COL_INK, color=COL_INK,
+            tickfont=dict(family="ui-monospace, monospace", color=COL_INK, size=10),
+            tickformat=y_tickformat,
+            ticksuffix=y_ticksuffix,
+            automargin=True,
+        ),
         legend=dict(font=dict(color=COL_INK)),
         hoverlabel=dict(bgcolor=COL_CARD, font=dict(color=COL_INK), bordercolor=COL_INK),
-        height=360,
+        height=380,
         showlegend=False,
         hovermode="x unified",
     )
@@ -699,7 +720,7 @@ with tab1:
             xs = [i * 0.1 for i in range(2, int(x_max * 10) + 1)]
             ys = [annuity_pv(m1, r1, x * 12) for x in xs]
 
-            fig1 = make_plot("", "term (years)", f"max loan")
+            fig1 = make_plot("", "term (years)", "max loan", y_tickformat=",.0f")
             fig1.add_trace(go.Scatter(
                 x=xs, y=ys, mode="lines", line=dict(color=COL_LEDGER, width=2.6),
                 name="Max loan", hovertemplate="term=%{x:.2f}y<br>loan=%{y:,.0f}<extra></extra>",
@@ -816,7 +837,8 @@ with tab2:
                 xs.append(n_rem)
             ys = [saving * t for t in xs]
 
-            fig2 = make_plot("", "months since refinancing", "cumulative savings")
+            fig2 = make_plot("", "months since refinancing", "cumulative savings",
+                              y_tickformat=",.0f", x_nticks=12)
             fig2.add_trace(go.Scatter(
                 x=xs, y=ys, mode="lines", line=dict(color=COL_LEDGER, width=2.6),
                 hovertemplate="month %{x}<br>saved %{y:,.0f}<extra></extra>",
@@ -947,7 +969,8 @@ with tab3:
             )
             xs = [t for t, _ in trace]
             ys = [b for _, b in trace]
-            fig3a = make_plot("", "month", "investment balance")
+            fig3a = make_plot("", "month", "investment balance",
+                               y_tickformat=",.0f", x_nticks=12)
             fig3a.add_trace(go.Scatter(
                 x=xs, y=ys, mode="lines", line=dict(color=COL_LEDGER, width=2.2),
                 hovertemplate="month %{x}<br>balance %{y:,.0f}<extra></extra>",
@@ -973,7 +996,9 @@ with tab3:
             xs2 = list(range(1, int(infl_max_plot) + 1))
             ys2 = [pv_real_of_payments(M_fixed, n, p / 100.0) / princ_for_curve for p in xs2]
 
-            fig3b = make_plot("", "annual inflation (%)", "real cost / principal")
+            fig3b = make_plot("", "annual inflation (%)", "real cost / principal",
+                               y_tickformat=".2f", y_ticksuffix="x",
+                               x_ticksuffix="%", x_nticks=10)
             fig3b.add_trace(go.Scatter(
                 x=xs2, y=ys2, mode="lines", line=dict(color=COL_LEDGER, width=2.2),
                 hovertemplate="inflation %{x}%%<br>%{y:.2f}x<extra></extra>",
@@ -1115,7 +1140,8 @@ with tab4:
             prices_durconv = [bond_price_approx(price_b, mod_dur, convexity, y - ytm, use_convexity=True)
                                for y in ys_yield]
 
-            figA = make_plot("", "yield to maturity (%)", "price")
+            figA = make_plot("", "yield to maturity (%)", "price",
+                              x_ticksuffix="%", y_tickformat=",.2f")
             figA.add_trace(go.Scatter(
                 x=[y * 100 for y in ys_yield], y=prices_actual, mode="lines",
                 line=dict(color=COL_LEDGER, width=2.6), name="Actual price",
@@ -1162,7 +1188,8 @@ with tab4:
             pct_dur = [(-mod_dur * dy) * 100 for dy in dys]
             pct_durconv = [(-mod_dur * dy + 0.5 * convexity * dy ** 2) * 100 for dy in dys]
 
-            figB = make_plot("", "yield shift, Δy (percentage points)", "% price change")
+            figB = make_plot("", "yield shift, Δy (percentage points)", "% price change",
+                              x_ticksuffix="%", y_ticksuffix="%", y_tickformat="+.1f")
             figB.add_trace(go.Scatter(
                 x=[dy * 100 for dy in dys], y=pct_actual, mode="lines",
                 line=dict(color=COL_LEDGER, width=2.6), name="Exact",
@@ -1203,7 +1230,8 @@ with tab4:
             )
             cf_years, cf_pvs = bond_pv_cashflow_curve(face, coupon_rate, ytm, n_periods_b, freq)
 
-            figC = make_plot("", "time to cash flow (years)", "present value of that cash flow")
+            figC = make_plot("", "time to cash flow (years)", "present value of that cash flow",
+                              y_tickformat=",.0f", x_nticks=12)
             figC.add_trace(go.Bar(
                 x=cf_years, y=cf_pvs, marker=dict(color=COL_LEDGER_L),
                 hovertemplate="t=%{x:.2f}y<br>PV=%{y:,.2f}<extra></extra>",
