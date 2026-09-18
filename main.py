@@ -219,12 +219,21 @@ st.markdown(f"""
       color: #000000 !important;
   }}
 
-  /* Tab labels: explicit, theme-independent contrast */
-  .stTabs [data-baseweb="tab-list"] button {{
-      color: {COL_MUTED} !important;
+  /* Tab labels: explicit, theme-independent contrast (dark blue).
+     Targets the button AND everything inside it, since Streamlit
+     nests the visible label text in a child <p>/<div> that can
+     otherwise keep its own (invisible) color. */
+  .stTabs [data-baseweb="tab-list"] button,
+  .stTabs [data-baseweb="tab-list"] button *,
+  .stTabs [data-baseweb="tab"],
+  .stTabs [data-baseweb="tab"] * {{
+      color: {COL_INK} !important;
   }}
-  .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {{
-      color: {COL_LEDGER} !important;
+  .stTabs [data-baseweb="tab-list"] button[aria-selected="true"],
+  .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] *,
+  .stTabs [aria-selected="true"][data-baseweb="tab"],
+  .stTabs [aria-selected="true"][data-baseweb="tab"] * {{
+      color: {COL_INK} !important;
       font-weight: bold;
   }}
 
@@ -1179,7 +1188,6 @@ st.caption(
     "Default figures illustrate a high-inflation, TL-style market, following the original companion "
     "tool's assumptions, but every input, and the currency itself, is fully editable above."
 )
-
 
 
 
