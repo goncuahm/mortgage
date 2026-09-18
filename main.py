@@ -207,6 +207,18 @@ st.markdown(f"""
       color: {COL_INK} !important;
   }}
 
+  /* Markdown tables (e.g. the "Reference-term comparison" table) —
+     unscoped and targeting the raw tags directly. Safe because this
+     app has exactly one real HTML <table> in it (everything else —
+     stat cards, verdict boxes, the header — is built from <div>s,
+     never table markup), so there is nothing else this can collide
+     with. table * also covers nested tags like <strong> for the
+     bolded selected-term row. */
+  table, table *, th, th *, td, td * {{
+      color: {COL_INK} !important;
+      background-color: {COL_CARD} !important;
+  }}
+
   /* Main-area widget labels, radio/checkbox option text, tables —
      covers both older ("main") and newer ("stMain") Streamlit DOM. */
   .main label, div[data-testid="stMain"] label,
@@ -1286,6 +1298,10 @@ st.markdown(f"""
   [data-testid="stCheckbox"] label,
   [data-testid="stCheckbox"] label * {{
       color: {COL_INK} !important;
+  }}
+  table, table *, th, th *, td, td * {{
+      color: {COL_INK} !important;
+      background-color: {COL_CARD} !important;
   }}
   .stTabs [role="tablist"] [role="tab"],
   .stTabs [role="tablist"] [role="tab"] *,
